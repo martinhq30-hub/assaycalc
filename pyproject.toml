@@ -3,13 +3,13 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "mining-assay-toolkit"
+name = "assaycalc"
 version = "0.1.0"
 description = "Librería para leer, validar y procesar datos de ensayos geológicos (assay) de sondajes mineros."
 readme = "README.md"
 license = "MIT"
 authors = [
-    { name = "Tu Nombre", email = "tu.email@ejemplo.com" }
+    { name = "Rodrigo", email = "martinhq30@gmail.com" }
 ]
 requires-python = ">=3.9"
 
