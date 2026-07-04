@@ -1,0 +1,29 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "mining-assay-toolkit"
+version = "0.1.0"
+description = "Librería para leer, validar y procesar datos de ensayos geológicos (assay) de sondajes mineros."
+readme = "README.md"
+license = "MIT"
+authors = [
+    { name = "Tu Nombre", email = "tu.email@ejemplo.com" }
+]
+requires-python = ">=3.9"
+
+dependencies = [
+    "pandas>=2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "mypy>=1.10",
+    "ruff>=0.5",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mining_assay_toolkit"]
