@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "assaycalc"
-version = "0.2.0.1"
+version = "0.2.0.2"
 description = "Librería para leer, validar y procesar datos de ensayos geológicos (assay) de sondajes mineros."
 readme = "README.md"
 license = "MIT"
