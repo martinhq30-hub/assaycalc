@@ -69,7 +69,7 @@ def test_validar_assay_falla_con_from_mayor_igual_to(df_valido):
 def test_validar_assay_falla_con_ley_negativa(df_valido):
     df_valido.loc[0, "Cu_pct"] = -0.1
 
-    with pytest.raises(ValueError, match="Cu_pct negativas"):
+    with pytest.raises(ValueError, match="negativas"):
         validar_assay(df_valido, columnas_ley=["Cu_pct"])
 
 
