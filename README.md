@@ -13,16 +13,18 @@ pip install assaycalc
 ```python
 from assaycalc import leer_csv_assay, validar_assay, componer_assay, guardar_csv
 
+COLUMNAS_LEY = ["Cu_pct"]  # Agrega aquí cualquier otra ley: "Au_gpt", "Ag_gpt", etc.
+
 # 1. Leer datos de assay desde un CSV
-df = leer_csv_assay("assay_original.csv")
+df = leer_csv_assay("assay_original.csv", columnas_ley=COLUMNAS_LEY)
 
 # 2. Validar integridad de los datos
-validar_assay(df)
+validar_assay(df, columnas_ley=COLUMNAS_LEY)
 
-# 3. Generar compósitos de 2 metros ponderados por ley de Cu
-df_compositos = componer_assay(df, longitud_composito=2.0)
+# 3. Generar compósitos de 2 metros ponderados por cada ley indicada
+df_compositos = componer_assay(df, longitud_composito=2.0, columnas_ley=COLUMNAS_LEY)
 
-# 4. Guardar el resultado
+# 4. Guardar el resultado (usa separador=";" si vas a abrirlo directo en Excel en español)
 guardar_csv(df_compositos, "assay_compuesto.csv")
 ```
 
@@ -30,12 +32,13 @@ guardar_csv(df_compositos, "assay_compuesto.csv")
 
 El CSV debe contener, como mínimo, estas columnas:
 
-| Columna    | Descripción                          |
-|------------|---------------------------------------|
-| `hole_id`  | Identificador del sondaje             |
-| `from`     | Profundidad inicial del intervalo (m) |
-| `to`       | Profundidad final del intervalo (m)   |
-| `Cu_pct`   | Ley de cobre (%) en el intervalo      |
+| Columna    | Descripción                            |
+|------------|------------------------------------------|
+| `hole_id`  | Identificador del sondaje               |
+| `from`     | Profundidad inicial del intervalo (m)   |
+| `to`       | Profundidad final del intervalo (m)     |
+
+Además, debe incluir **una o más columnas de ley** (por ejemplo `Cu_pct`, `Au_gpt`, `Ag_gpt`), indicadas explícitamente mediante el parámetro `columnas_ley` en cada función.
 
 ## Validaciones incluidas
 
@@ -43,16 +46,18 @@ El CSV debe contener, como mínimo, estas columnas:
 
 - Que no existan `hole_id` vacíos
 - Que todos los intervalos tengan `from < to`
-- Que no existan leyes de `Cu_pct` negativas
+- Que no existan leyes negativas en ninguna de las columnas indicadas en `columnas_ley`
 - Que no existan intervalos solapados dentro de un mismo sondaje
 
 Si alguna validación falla, se lanza un `ValueError` con el detalle del problema.
 
 ## Compositado
 
-`componer_assay()` divide cada sondaje en intervalos de longitud fija (por ejemplo, cada 2 metros) y calcula la ley promedio ponderada por la longitud de cada intervalo original que cae dentro del compósito.
+`componer_assay()` divide cada sondaje en intervalos de longitud fija (por ejemplo, cada 2 metros) y calcula, para cada ley indicada en `columnas_ley`, el promedio ponderado por la longitud de cada intervalo original que cae dentro del compósito.
 
-## Licencia
+## Exportar resultados
+
+`guardar_csv()` acepta parámetros opcionales `separador` y `codificacion`. Por defecto usa coma (`,`) como separador, el estándar universal de CSV. Si vas a abrir el archivo con doble clic en Excel configurado en español, usa `separador=";"` para evitar que todo aparezca en una sola columna.
 
 ## Licencia
 
