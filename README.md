@@ -1,17 +1,17 @@
-# mining-assay-toolkit
+# assaycalc
 
 Herramientas en Python para el procesamiento y validación de datos de assay geológico (sondajes de exploración minera).
 
 ## Instalación
 
 ```bash
-pip install mining-assay-toolkit
+pip install assaycalc
 ```
 
 ## Uso rápido
 
 ```python
-from mining_assay_toolkit import leer_csv_assay, validar_assay, componer_assay, guardar_csv
+from assaycalc import leer_csv_assay, validar_assay, componer_assay, guardar_csv
 
 # 1. Leer datos de assay desde un CSV
 df = leer_csv_assay("assay_original.csv")
@@ -54,4 +54,6 @@ Si alguna validación falla, se lanza un `ValueError` con el detalle del problem
 
 ## Licencia
 
-MIT — ver [LICENSE](LICENSE) para más detalles.
+## Licencia
+
+MIT — ver [LICENSE](https://github.com/martinhq30-hub/assaycalc/blob/main/LICENSE) para más detalles.

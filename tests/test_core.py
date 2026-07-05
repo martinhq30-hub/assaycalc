@@ -3,7 +3,7 @@
 import pandas as pd
 import pytest
 
-from mining_assay_toolkit.core import (
+from assaycalc.core import (
     leer_csv_assay,
     validar_assay,
     componer_assay,
