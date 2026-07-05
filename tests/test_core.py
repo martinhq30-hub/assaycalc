@@ -46,6 +46,15 @@ def test_leer_csv_assay_falla_si_faltan_columnas(tmp_path):
     with pytest.raises(ValueError, match="Faltan columnas requeridas"):
         leer_csv_assay(str(ruta), columnas_ley=["Cu_pct"])
 
+def test_leer_csv_assay_respeta_separador_personalizado(tmp_path):
+    """leer_csv_assay debe poder leer archivos separados por ; además de ,."""
+    ruta = tmp_path / "assay_punto_coma.csv"
+    ruta.write_text("hole_id;from;to;Cu_pct\nDDH-01;0.0;2.0;0.5\n")
+
+    df = leer_csv_assay(str(ruta), columnas_ley=["Cu_pct"], separador=";")
+
+    assert list(df.columns) == ["hole_id", "from", "to", "Cu_pct"]
+    assert df.loc[0, "hole_id"] == "DDH-01"
 
 # ---------- Tests: validar_assay ----------
 
@@ -181,3 +190,13 @@ def test_validar_integridad_referencial_falla_con_hole_id_huerfano(df_collar_val
 
     with pytest.raises(ValueError, match="sin collar correspondiente"):
         validar_integridad_referencial(df_collar_valido, df_assay_huerfano)
+
+def test_leer_csv_collar_respeta_separador_personalizado(tmp_path):
+    """leer_csv_collar debe poder leer archivos separados por ; además de ,."""
+    ruta = tmp_path / "collar_punto_coma.csv"
+    ruta.write_text("hole_id;x;y;z\nDDH-01;500.0;1200.0;3400.0\n")
+
+    df = leer_csv_collar(str(ruta), separador=";")
+
+    assert list(df.columns) == ["hole_id", "x", "y", "z"]
+    assert df.loc[0, "hole_id"] == "DDH-01"

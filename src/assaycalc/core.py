@@ -8,15 +8,17 @@ import pandas as pd
 COLUMNAS_BASE = {"hole_id", "from", "to"}
 
 
-def leer_csv_assay(ruta: str, columnas_ley: Sequence[str]) -> pd.DataFrame:
+def leer_csv_assay(ruta: str, columnas_ley: Sequence[str], separador: str = ",") -> pd.DataFrame:
     """Lee un archivo CSV de assay y devuelve un DataFrame.
 
     Args:
         ruta: Ruta del archivo CSV.
-        columnas_ley: Nombres de las columnas de ley a exigir/procesar
-            (ej. ["Cu_pct", "Au_gpt", "Ag_gpt"]).
+        columnas_ley: Nombres de las columnas de ley a exigir/procesar.
+        separador: Carácter separador de columnas del archivo de entrada.
+            Usa "," (por defecto) o ";" si el archivo viene de Excel
+            configurado en español.
     """
-    df = pd.read_csv(ruta)
+    df = pd.read_csv(ruta, sep=separador)
     columnas_requeridas = COLUMNAS_BASE | set(columnas_ley)
     columnas_faltantes = columnas_requeridas - set(df.columns)
     if columnas_faltantes:
@@ -104,18 +106,18 @@ def guardar_csv(
 COLUMNAS_COLLAR = {"hole_id", "x", "y", "z"}
 
 
-def leer_csv_collar(ruta: str) -> pd.DataFrame:
+def leer_csv_collar(ruta: str, separador: str = ",") -> pd.DataFrame:
     """Lee un archivo CSV de collar (ubicación de sondajes).
 
     Args:
         ruta: Ruta del archivo CSV con columnas hole_id, x, y, z.
+        separador: Carácter separador de columnas del archivo de entrada.
     """
-    df = pd.read_csv(ruta)
+    df = pd.read_csv(ruta, sep=separador)
     columnas_faltantes = COLUMNAS_COLLAR - set(df.columns)
     if columnas_faltantes:
         raise ValueError(f"Faltan columnas requeridas en collar: {columnas_faltantes}")
     return df
-
 
 def validar_collar(df: pd.DataFrame) -> None:
     """Valida reglas mínimas de integridad sobre los datos de collar."""
