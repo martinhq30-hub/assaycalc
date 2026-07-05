@@ -14,4 +14,4 @@ __all__ = [
     "validar_assay",
 ]
 
-__version__ = "0.1.2.4"
+__version__ = "0.2.0.0"

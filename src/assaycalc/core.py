@@ -100,3 +100,42 @@ def guardar_csv(
             y evita que tildes o "ñ" se vean corruptas.
     """
     df.to_csv(ruta, index=False, sep=separador, encoding=codificacion)
+
+COLUMNAS_COLLAR = {"hole_id", "x", "y", "z"}
+
+
+def leer_csv_collar(ruta: str) -> pd.DataFrame:
+    """Lee un archivo CSV de collar (ubicación de sondajes).
+
+    Args:
+        ruta: Ruta del archivo CSV con columnas hole_id, x, y, z.
+    """
+    df = pd.read_csv(ruta)
+    columnas_faltantes = COLUMNAS_COLLAR - set(df.columns)
+    if columnas_faltantes:
+        raise ValueError(f"Faltan columnas requeridas en collar: {columnas_faltantes}")
+    return df
+
+
+def validar_collar(df: pd.DataFrame) -> None:
+    """Valida reglas mínimas de integridad sobre los datos de collar."""
+    if df["hole_id"].isna().any():
+        raise ValueError("Existen filas de collar con hole_id vacío.")
+
+    duplicados = df["hole_id"][df["hole_id"].duplicated()]
+    if not duplicados.empty:
+        raise ValueError(
+            f"Existen hole_id duplicados en collar: {set(duplicados)}"
+        )
+
+
+def validar_integridad_referencial(df_collar: pd.DataFrame, df_assay: pd.DataFrame) -> None:
+    """Verifica que todo hole_id en assay exista también en collar."""
+    hole_ids_collar = set(df_collar["hole_id"])
+    hole_ids_assay = set(df_assay["hole_id"])
+
+    huerfanos = hole_ids_assay - hole_ids_collar
+    if huerfanos:
+        raise ValueError(
+            f"Existen hole_id en assay sin collar correspondiente: {huerfanos}"
+        )

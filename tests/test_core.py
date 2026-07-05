@@ -8,6 +8,9 @@ from assaycalc.core import (
     validar_assay,
     componer_assay,
     guardar_csv,
+    leer_csv_collar,
+    validar_collar,
+    validar_integridad_referencial,
 )
 
 
@@ -131,3 +134,50 @@ def test_guardar_csv_crea_archivo_correctamente(tmp_path, df_valido):
     assert ruta.exists()
     df_leido = pd.read_csv(ruta)
     assert len(df_leido) == len(df_valido)
+
+# ---------- Tests: collar ----------
+
+@pytest.fixture
+def df_collar_valido():
+    return pd.DataFrame({
+        "hole_id": ["DDH-01", "DDH-02"],
+        "x": [500.0, 520.0],
+        "y": [1200.0, 1210.0],
+        "z": [3400.0, 3390.0],
+    })
+
+
+def test_leer_csv_collar_falla_si_faltan_columnas(tmp_path):
+    df_incompleto = pd.DataFrame({"hole_id": ["DDH-01"], "x": [500.0]})
+    ruta = tmp_path / "collar_incompleto.csv"
+    df_incompleto.to_csv(ruta, index=False)
+
+    with pytest.raises(ValueError, match="Faltan columnas requeridas en collar"):
+        leer_csv_collar(str(ruta))
+
+
+def test_validar_collar_pasa_con_datos_correctos(df_collar_valido):
+    validar_collar(df_collar_valido)
+
+
+def test_validar_collar_falla_con_hole_id_duplicado(df_collar_valido):
+    df_collar_valido.loc[1, "hole_id"] = "DDH-01"
+
+    with pytest.raises(ValueError, match="duplicados"):
+        validar_collar(df_collar_valido)
+
+
+def test_validar_integridad_referencial_pasa_cuando_todo_coincide(df_collar_valido, df_valido):
+    validar_integridad_referencial(df_collar_valido, df_valido)
+
+
+def test_validar_integridad_referencial_falla_con_hole_id_huerfano(df_collar_valido):
+    df_assay_huerfano = pd.DataFrame({
+        "hole_id": ["DDH-99"],
+        "from": [0.0],
+        "to": [2.0],
+        "Cu_pct": [0.5],
+    })
+
+    with pytest.raises(ValueError, match="sin collar correspondiente"):
+        validar_integridad_referencial(df_collar_valido, df_assay_huerfano)
